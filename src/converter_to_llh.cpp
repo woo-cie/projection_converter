@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <iostream>
 #include <projection_converter/converter_to_llh.hpp>
 
 ConverterToLLH::ConverterToLLH(const YAML::Node &config) {
@@ -12,21 +13,17 @@ LatLonAlt ConverterToLLH::convert(const pcl::PointXYZ &xyz) {
   LatLonAlt llh;
   if (projector_type_ == "MGRS") {
     try {
-      std::string mgrs =
-          std::to_string(int(xyz.x * 1e3)) + std::to_string(int(xyz.y * 1e3));
-
       int zone;
       bool northp;
-      double x, y;
+      double mgrs_base_x, mgrs_base_y;
       int prec = 8;
       bool longpath = false;
-      GeographicLib::MGRS::Reverse(mgrs_grid_ + mgrs, zone, northp, x, y, prec,
-                                   longpath);
-
-      int utm_zone = std::stoi(mgrs_grid_.substr(0, 2));
+      GeographicLib::MGRS::Reverse(mgrs_grid_, zone, northp, mgrs_base_x,
+                                   mgrs_base_y, prec, longpath);
 
       // Convert UTM to LLH
-      GeographicLib::UTMUPS::Reverse(utm_zone, northp, x, y, llh.lat, llh.lon);
+      GeographicLib::UTMUPS::Reverse(zone, northp, xyz.x + mgrs_base_x,
+                                     xyz.y + mgrs_base_y, llh.lat, llh.lon);
 
       llh.alt = xyz.z;
     } catch (const std::exception &e) {
