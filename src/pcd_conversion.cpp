@@ -9,6 +9,7 @@
 
 #include <projection_converter/converter_from_llh.hpp>
 #include <projection_converter/converter_to_llh.hpp>
+#include <projection_converter/progress_bar.hpp>
 
 // Function to draw a progress bar
 void drawProgressBar(int len, double percent) {
@@ -45,20 +46,26 @@ int main(int argc, char **argv) {
   // Define converters
   ConverterToLLH to_llh(input_config);
   ConverterFromLLH from_llh(output_config);
+  ProgressBar pg;
 
   // Convert points
   size_t n_points = cloud->points.size();
+  pg.start(n_points);
+
+#pragma omp parallel for
   for (size_t i = 0; i < n_points; ++i) {
     auto &point = cloud->points[i];
     double prev_x = point.x;
     double prev_y = point.y;
     LatLonAlt llh = to_llh.convert(point);
     point = from_llh.convert(llh);
-    // std::cout << std::setprecision(15) << prev_x << " and " << prev_y  <<
-    // " to " << llh.lat << " to " << point.x << std::endl;
+    // std::cout << std::setprecision(15) << prev_x << " and " << prev_y
+    //           << " to " << llh.lat << " and " << llh.lon << " to "
+    //           << point.x << " and " << point.y << std::endl;
 
     // Update and draw the progress bar
-    drawProgressBar(70, static_cast<double>(i + 1) / n_points);
+    // drawProgressBar(70, static_cast<double>(i + 1) / n_points);
+    pg.update(1);
   }
   std::cout << std::endl;
 

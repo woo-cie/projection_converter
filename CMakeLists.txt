@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 # Find required packages
 find_package(PCL 1.3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(OpenMP REQUIRED)
 
 # find_package(GeographicLib REQUIRED)
 find_path(GeographicLib_INCLUDE_DIRS NAMES GeographicLib/Config.h)
@@ -27,6 +28,8 @@ add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp"
 # Create two executables
 add_executable(PCDConverter "src/pcd_conversion.cpp")
 add_executable(Lanelet2Converter "src/lanelet_conversion.cpp")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 # Link the libraries
 target_link_libraries(PCDConverter ConverterLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
