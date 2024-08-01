@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
   std::cout << std::endl;
 
   // Save converted point cloud to file
-  pcl::io::savePCDFileASCII(argv[4], *cloud);
+  pcl::io::savePCDFileBinary(argv[4], *cloud);
 
   std::cout << "Point cloud projection conversion completed successfully.\n";
 
