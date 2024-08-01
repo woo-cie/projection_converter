@@ -1,12 +1,11 @@
-#include <iostream>
+#include <GeographicLib/MGRS.hpp>
 #include <iomanip>
-#include <string>
+#include <iostream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-#include <yaml-cpp/yaml.h>
-#include <gdal/ogr_spatialref.h>
-#include <GeographicLib/MGRS.hpp>
 #include <projection_converter/lat_lon_alt.hpp>
+#include <string>
+#include <yaml-cpp/yaml.h>
 
 #include <projection_converter/converter_from_llh.hpp>
 #include <projection_converter/converter_to_llh.hpp>
@@ -17,8 +16,7 @@ void drawProgressBar(int len, double percent) {
   for (int i = 0; i < len; ++i) {
     if (i < static_cast<int>(len * percent)) {
       std::cout << '=';
-    }
-    else {
+    } else {
       std::cout << ' ';
     }
   }
@@ -26,10 +24,10 @@ void drawProgressBar(int len, double percent) {
   std::cout.flush();
 }
 
-
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   if (argc != 5) {
-    std::cout << "Usage: ./ProjectionConverter input_yaml output_yaml input_pcd output_pcd\n";
+    std::cout << "Usage: ./ProjectionConverter input_yaml output_yaml "
+                 "input_pcd output_pcd\n";
     return -1;
   }
 
@@ -51,12 +49,12 @@ int main(int argc, char** argv) {
   // Convert points
   size_t n_points = cloud->points.size();
   for (size_t i = 0; i < n_points; ++i) {
-    auto& point = cloud->points[i];
+    auto &point = cloud->points[i];
     LatLonAlt llh = to_llh.convert(point);
     point = from_llh.convert(llh);
 
     // Update and draw the progress bar
-    drawProgressBar(70, static_cast<double>(i+1) / n_points);
+    drawProgressBar(70, static_cast<double>(i + 1) / n_points);
   }
   std::cout << std::endl;
 
