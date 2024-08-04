@@ -23,7 +23,7 @@ link_directories(${LANELET2_LIBRARY_DIRS})
 
 add_definitions(${PCL_DEFINITIONS})
 
-add_library(MapProjectorLib "src/map_projector/mgrs_map_projector.cpp")
+add_library(MapProjectorLib "src/map_projector/mgrs_map_projector.cpp" "src/map_projector/tm_map_projector.cpp")
 
 # Add the sub.cpp file as a library
 add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp")
@@ -49,10 +49,12 @@ FetchContent_Declare(
 # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 enable_testing()
+include(GoogleTest)
 
-# Now simply link against gtest or gtest_main as needed. Eg
 add_executable(test-MgrsMapProjector "test/test_mgrs_map_projector.cpp")
 target_link_libraries(test-MgrsMapProjector gtest_main MapProjectorLib ${GeographicLib_LIBRARIES})
-
-include(GoogleTest)
 gtest_discover_tests(test-MgrsMapProjector)
+
+add_executable(test-TmMapProjector "test/test_tm_map_projector.cpp")
+target_link_libraries(test-TmMapProjector gtest_main MapProjectorLib ${GeographicLib_LIBRARIES})
+gtest_discover_tests(test-TmMapProjector)
