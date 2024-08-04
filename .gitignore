@@ -33,9 +33,6 @@ CMakeCache.txt
 *.cmake
 Makefile
 
-# Point Cloud Data files
-*.pcd
-
 # Other
 *.log
 *.bak
