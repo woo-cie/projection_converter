@@ -1,0 +1,5 @@
+projector_type: TransverseMercator
+map_origin:
+  latitude: 37.89810637710265
+  longitude: 137.5882546000352
+  altitude: 2.0
