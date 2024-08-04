@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 
 # Define the project and set the C++ standard
 project(ProjectionConverter)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
@@ -23,6 +23,8 @@ link_directories(${LANELET2_LIBRARY_DIRS})
 
 add_definitions(${PCL_DEFINITIONS})
 
+add_library(MapProjectorLib "src/map_projector/mgrs_map_projector.cpp")
+
 # Add the sub.cpp file as a library
 add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp")
 
@@ -30,7 +32,7 @@ add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp"
 add_executable(PCDConverter "src/pcd_conversion.cpp")
 add_executable(Lanelet2Converter "src/lanelet_conversion.cpp")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Wall")
 
 # Link the libraries
 target_link_libraries(PCDConverter ConverterLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
@@ -49,7 +51,8 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # Now simply link against gtest or gtest_main as needed. Eg
-add_executable(test-example "test/test_example.cpp")
-target_link_libraries(test-example gtest_main)
+add_executable(test-MgrsMapProjector "test/test_mgrs_map_projector.cpp")
+target_link_libraries(test-MgrsMapProjector gtest_main MapProjectorLib ${GeographicLib_LIBRARIES})
+
 include(GoogleTest)
-gtest_discover_tests(test-example)
+gtest_discover_tests(test-MgrsMapProjector)
