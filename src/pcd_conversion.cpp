@@ -3,12 +3,10 @@
 #include <iostream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-#include <projection_converter/lat_lon_alt.hpp>
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
+#include <map_projector/map_projector.hpp>
 #include <projection_converter/progress_bar.hpp>
 
 // Function to draw a progress bar
@@ -44,8 +42,8 @@ int main(int argc, char **argv) {
   }
 
   // Define converters
-  ConverterToLLH to_llh(input_config);
-  ConverterFromLLH from_llh(output_config);
+  auto in_map_projector = MapProjector::getMapProjector(input_config);
+  auto out_map_projector = MapProjector::getMapProjector(output_config);
   ProgressBar pg;
 
   // Convert points
@@ -55,13 +53,10 @@ int main(int argc, char **argv) {
 #pragma omp parallel for
   for (size_t i = 0; i < n_points; ++i) {
     auto &point = cloud->points[i];
-    double prev_x = point.x;
-    double prev_y = point.y;
-    LatLonAlt llh = to_llh.convert(point);
-    point = from_llh.convert(llh);
-    // std::cout << std::setprecision(15) << prev_x << " and " << prev_y
-    //           << " to " << llh.lat << " and " << llh.lon << " to "
-    //           << point.x << " and " << point.y << std::endl;
+    auto ll = in_map_projector->convertToLatLon(Coord{point.x, point.y});
+    auto coord = out_map_projector->convertToCoord(ll);
+    point.x = coord.x;
+    point.y = coord.y;
 
     // Update and draw the progress bar
     // drawProgressBar(70, static_cast<double>(i + 1) / n_points);
