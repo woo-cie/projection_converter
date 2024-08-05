@@ -15,14 +15,22 @@ MgrsMapProjector::MgrsMapProjector(std::string mgrs_grid) {
   }
 };
 
-void MgrsMapProjector::convertToLatLon(Coord coord, LatLon &ll) {
+LatLon MgrsMapProjector::convertToLatLon(Coord coord) {
+  LatLon ll;
+
   GeographicLib::UTMUPS::Reverse(zone_, northp_, coord.x + base_x_,
                                  coord.y + base_y_, ll.lat, ll.lon);
+
+  return ll;
 };
 
-void MgrsMapProjector::convertToCoord(LatLon ll, Coord &coord) {
+Coord MgrsMapProjector::convertToCoord(LatLon ll) {
+  Coord coord;
+
   GeographicLib::UTMUPS::Forward(ll.lat, ll.lon, zone_, northp_, coord.x,
                                  coord.y);
   coord.x -= base_x_;
   coord.y -= base_y_;
+
+  return coord;
 };

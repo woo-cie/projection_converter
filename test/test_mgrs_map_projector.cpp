@@ -34,17 +34,11 @@ void MgrsMapProjectorTest::expectAlmostSameCoord(Coord a, Coord b) {
 };
 
 TEST_F(MgrsMapProjectorTest, CoordToLatlon) {
-  LatLon val;
-
-  proj.convertToLatLon(coord, val);
-
+  auto val = proj.convertToLatLon(coord);
   expectAlmostSameLatLon(ll, val);
 }
 
 TEST_F(MgrsMapProjectorTest, LatlonToCoord) {
-  Coord val;
-
-  proj.convertToCoord(ll, val);
-
+  auto val = proj.convertToCoord(ll);
   expectAlmostSameCoord(coord, val);
 }
