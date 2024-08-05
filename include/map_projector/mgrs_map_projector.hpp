@@ -1,6 +1,9 @@
+#ifndef MAP_PROJECTOR__MGRS_MAP_PROJECTOR_HPP
+#define MAP_PROJECTOR__MGRS_MAP_PROJECTOR_HPP
+
 #include "./map_projector.hpp"
 
-class MgrsMapProjector : MapProjector {
+class MgrsMapProjector : public MapProjector {
 private:
   int zone_;
   bool northp_;
@@ -10,6 +13,8 @@ private:
 
 public:
   MgrsMapProjector(std::string mgrs_grid);
-  virtual void convertToLatLon(Coord coord, LatLon &ll);
-  virtual void convertToCoord(LatLon ll, Coord &coord);
+  virtual LatLon convertToLatLon(Coord coord);
+  virtual Coord convertToCoord(LatLon ll);
 };
+
+#endif //  MAP_PROJECTOR__MGRS_MAP_PROJECTOR_HPP

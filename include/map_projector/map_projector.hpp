@@ -1,6 +1,10 @@
+#ifndef MAP_PROJECTOR__MAP_PROJECTOR_HPP
+#define MAP_PROJECTOR__MAP_PROJECTOR_HPP
+
 #include <GeographicLib/Math.hpp>
 #include <GeographicLib/TransverseMercatorExact.hpp>
 #include <string>
+#include <yaml-cpp/yaml.h>
 
 struct LatLon {
   GeographicLib::Math::real lat;
@@ -14,6 +18,9 @@ struct Coord {
 
 class MapProjector {
 public:
-  virtual void convertToLatLon(Coord coord, LatLon &ll) {};
-  virtual void convertToCoord(LatLon ll, Coord &coord) {};
+  virtual LatLon convertToLatLon(Coord coord) { return LatLon{}; };
+  virtual Coord convertToCoord(LatLon ll) { return Coord{}; };
+  static MapProjector *getMapProjector(const YAML::Node &config);
 };
+
+#endif // MAP_PROJECTOR__MAP_PROJECTOR_HPP
