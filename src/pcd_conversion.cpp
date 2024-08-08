@@ -1,7 +1,9 @@
 #include <GeographicLib/MGRS.hpp>
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
-#include <pcl/io/pcd_io.h>
+#include <pcl/PCLPointCloud2.h>
+#include <pcl/io/auto_io.h>
 #include <pcl/point_types.h>
 #include <projection_converter/lat_lon_alt.hpp>
 #include <string>
@@ -37,8 +39,8 @@ int main(int argc, char **argv) {
   YAML::Node output_config = YAML::LoadFile(argv[2]);
 
   // Load point cloud data from file
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-  if (pcl::io::loadPCDFile<pcl::PointXYZ>(argv[3], *cloud) == -1) {
+  pcl::PCLPointCloud2::Ptr cloud(new pcl::PCLPointCloud2);
+  if (pcl::io::load(argv[3], *cloud) == -1) {
     std::cerr << "Couldn't read file " << argv[3] << "\n";
     return -1;
   }
@@ -49,28 +51,42 @@ int main(int argc, char **argv) {
   ProgressBar pg;
 
   // Convert points
-  size_t n_points = cloud->points.size();
+  pcl::uindex_t n_points = cloud->width * cloud->height;
   pg.start(n_points);
 
+  auto x_idx = std::find_if(cloud->fields.begin(), cloud->fields.end(),
+                            [](auto v) { return v.name == "x"; });
+  if (x_idx == cloud->fields.end()) {
+    std::cerr << "Input pcd file has no 'x' field." << "\n";
+    return -1;
+  }
+
+  auto y_idx = std::find_if(cloud->fields.begin(), cloud->fields.end(),
+                            [](pcl::PCLPointField v) { return v.name == "y"; });
+  if (y_idx == cloud->fields.end()) {
+    std::cerr << "Input pcd file has no 'y' field." << "\n";
+    return -1;
+  }
+
 #pragma omp parallel for
-  for (size_t i = 0; i < n_points; ++i) {
-    auto &point = cloud->points[i];
-    double prev_x = point.x;
-    double prev_y = point.y;
+  for (pcl::uindex_t i = 0; i < n_points; ++i) {
+    const auto point_index = i;
+    const pcl::uindex_t &field_offset = 1;
+    auto prev_x = cloud->at<float>(i, x_idx->offset);
+    auto prev_y = cloud->at<float>(i, y_idx->offset);
+
+    auto point = pcl::PointXYZ{(prev_x), (prev_y), 0};
     LatLonAlt llh = to_llh.convert(point);
     point = from_llh.convert(llh);
-    // std::cout << std::setprecision(15) << prev_x << " and " << prev_y
-    //           << " to " << llh.lat << " and " << llh.lon << " to "
-    //           << point.x << " and " << point.y << std::endl;
 
-    // Update and draw the progress bar
-    // drawProgressBar(70, static_cast<double>(i + 1) / n_points);
+    cloud->at<float>(i, x_idx->offset) = point.x;
+    cloud->at<float>(i, y_idx->offset) = point.y;
     pg.update(1);
   }
   std::cout << std::endl;
 
   // Save converted point cloud to file
-  pcl::io::savePCDFileBinary(argv[4], *cloud);
+  pcl::io::save(argv[4], *cloud);
 
   std::cout << "Point cloud projection conversion completed successfully.\n";
 
