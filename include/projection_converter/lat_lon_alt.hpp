@@ -7,4 +7,10 @@ struct LatLonAlt {
   double alt;
 };
 
+struct Coord {
+  double x;
+  double y;
+  double z;
+};
+
 #endif // PROJECTION_CONVERTER__LAT_LON_ALT_HPP

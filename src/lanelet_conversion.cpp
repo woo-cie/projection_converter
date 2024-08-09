@@ -50,8 +50,12 @@ int main(int argc, char **argv) {
   size_t n_points = cloud->points.size();
   for (size_t i = 0; i < n_points; ++i) {
     auto &point = cloud->points[i];
-    LatLonAlt llh = to_llh.convert(point);
-    point = from_llh.convert(llh);
+    Coord prev_coord{point.x, point.y, point.z};
+    LatLonAlt llh = to_llh.convert(prev_coord);
+    auto next_coord = from_llh.convert(llh);
+    point = pcl::PointXYZ{static_cast<float>(next_coord.x),
+                          static_cast<float>(next_coord.y),
+                          static_cast<float>(next_coord.z)};
 
     // Update and draw the progress bar
     drawProgressBar(70, static_cast<double>(i + 1) / n_points);

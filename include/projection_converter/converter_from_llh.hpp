@@ -4,7 +4,6 @@
 #include <GeographicLib/MGRS.hpp>
 #include <GeographicLib/TransverseMercatorExact.hpp>
 #include <iostream>
-#include <pcl/point_types.h>
 #include <projection_converter/lat_lon_alt.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -13,7 +12,7 @@
 class ConverterFromLLH {
 public:
   ConverterFromLLH(const YAML::Node &config);
-  pcl::PointXYZ convert(const LatLonAlt &xyz);
+  Coord convert(const LatLonAlt &llh);
 
 private:
   std::string projector_type_;

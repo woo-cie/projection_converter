@@ -17,8 +17,8 @@ ConverterFromLLH::ConverterFromLLH(const YAML::Node &config) {
   }
 }
 
-pcl::PointXYZ ConverterFromLLH::convert(const LatLonAlt &llh) {
-  pcl::PointXYZ xyz;
+Coord ConverterFromLLH::convert(const LatLonAlt &llh) {
+  Coord xyz;
   if (projector_type_ == "TransverseMercator") {
     const GeographicLib::TransverseMercatorExact &proj =
         GeographicLib::TransverseMercatorExact::UTM();
@@ -37,7 +37,7 @@ pcl::PointXYZ ConverterFromLLH::convert(const LatLonAlt &llh) {
                  "TransverseMercator is supported currently.\n";
     std::cerr << "Not supported projector type: " << projector_type_
               << std::endl;
-    return pcl::PointXYZ();
+    return Coord();
   }
   return xyz;
 }
