@@ -75,12 +75,11 @@ int main(int argc, char **argv) {
     auto prev_x = cloud->at<float>(i, x_idx->offset);
     auto prev_y = cloud->at<float>(i, y_idx->offset);
 
-    auto point = pcl::PointXYZ{(prev_x), (prev_y), 0};
-    LatLonAlt llh = to_llh.convert(point);
-    point = from_llh.convert(llh);
+    LatLonAlt llh = to_llh.convert(Coord{prev_x, prev_y, 0});
+    auto coord = from_llh.convert(llh);
 
-    cloud->at<float>(i, x_idx->offset) = point.x;
-    cloud->at<float>(i, y_idx->offset) = point.y;
+    cloud->at<float>(i, x_idx->offset) = coord.x;
+    cloud->at<float>(i, y_idx->offset) = coord.y;
     pg.update(1);
   }
   std::cout << std::endl;

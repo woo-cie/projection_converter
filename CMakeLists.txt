@@ -9,17 +9,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PCL 1.3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(OpenMP REQUIRED)
+find_package(libxml2 2.12 REQUIRED)
 
 # find_package(GeographicLib REQUIRED)
 find_path(GeographicLib_INCLUDE_DIRS NAMES GeographicLib/Config.h)
 find_library(GeographicLib_LIBRARIES NAMES GeographicLib)
 
 include_directories(${PCL_INCLUDE_DIRS})
-include_directories(${LANELET2_INCLUDE_DIRS})
+include_directories(${LIBXML2_INCLUDE_DIRS})
 include_directories(include)
 
 link_directories(${PCL_LIBRARY_DIRS})
-link_directories(${LANELET2_LIBRARY_DIRS})
+link_directories(${LIBXML2_LIBRARIES})
 
 add_definitions(${PCL_DEFINITIONS})
 
@@ -34,7 +35,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 # Link the libraries
 target_link_libraries(PCDConverter ConverterLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
-target_link_libraries(Lanelet2Converter ConverterLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
+target_link_libraries(Lanelet2Converter ConverterLib ${LIBXML2_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
 
 # For test
 include(FetchContent)

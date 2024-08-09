@@ -9,7 +9,7 @@ ConverterToLLH::ConverterToLLH(const YAML::Node &config) {
   }
 }
 
-LatLonAlt ConverterToLLH::convert(const pcl::PointXYZ &xyz) {
+LatLonAlt ConverterToLLH::convert(const Coord &xyz) {
   LatLonAlt llh;
   if (projector_type_ == "MGRS") {
     try {
