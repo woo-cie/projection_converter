@@ -24,10 +24,8 @@ link_directories(${LIBXML2_LIBRARIES})
 
 add_definitions(${PCL_DEFINITIONS})
 
-add_library(MapProjectorLib "src/map_projector/mgrs_map_projector.cpp" "src/map_projector/tm_map_projector.cpp" "src/map_projector/map_projector.cpp")
-
 # Add the sub.cpp file as a library
-add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp")
+add_library(MapProjectorLib "src/map_projector/mgrs_map_projector.cpp" "src/map_projector/tm_map_projector.cpp" "src/map_projector/map_projector.cpp")
 
 # Create two executables
 add_executable(PCDConverter "src/pcd_conversion.cpp")
