@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 
 # Define the project and set the C++ standard
 project(ProjectionConverter)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
@@ -26,6 +26,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 # Add the sub.cpp file as a library
 add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp")
+add_library(CsvLib "src/csv.cpp")
 
 # Create two executables
 add_executable(PCDConverter "src/pcd_conversion.cpp")
@@ -37,7 +38,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Wall")
 # Link the libraries
 target_link_libraries(PCDConverter ConverterLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
 target_link_libraries(Lanelet2Converter ConverterLib ${LIBXML2_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
-target_link_libraries(StoppointsConverter ConverterLib yaml-cpp ${GeographicLib_LIBRARIES})
+target_link_libraries(StoppointsConverter ConverterLib CsvLib yaml-cpp ${GeographicLib_LIBRARIES})
 
 # For test
 include(FetchContent)
