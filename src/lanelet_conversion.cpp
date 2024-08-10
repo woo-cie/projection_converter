@@ -5,12 +5,9 @@
 #include <libxml/tree.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/xpath.h>
-#include <projection_converter/lat_lon_alt.hpp>
+#include <map_projector/map_projector.hpp>
 #include <string>
 #include <yaml-cpp/yaml.h>
-
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
 
 // Function to draw a progress bar
 void drawProgressBar(int len, double percent) {
@@ -44,11 +41,6 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  // <osm generator="VMB">
-  //   <MetaInfo format_version="1" map_version="2"/>
-  //   <node id="1" lat="37.89806221565" lon="137.58828505566">
-  //     <tag k="local_x" v="2.5"/>
-
   auto xpath_context = xmlXPathNewContext(doc);
   if (xpath_context == NULL) {
     std::cerr << "Unable to create new XPath context." << std::endl;
@@ -65,8 +57,8 @@ int main(int argc, char **argv) {
   }
 
   // Define converters
-  ConverterToLLH to_llh(input_config);
-  ConverterFromLLH from_llh(output_config);
+  auto in_map_projector = MapProjector::getMapProjector(input_config);
+  auto out_map_projector = MapProjector::getMapProjector(output_config);
 
   auto nodes = xpath_object->nodesetval;
   auto size = nodes->nodeNr;
@@ -74,8 +66,6 @@ int main(int argc, char **argv) {
   // Convert points
   for (auto i = 0; i < size; i++) {
     auto node = nodes->nodeTab[i];
-    auto lat = xmlGetProp(node, (const xmlChar *)"lat");
-    auto lon = xmlGetProp(node, (const xmlChar *)"lon");
 
     auto c = node->children;
     xmlNodePtr local_x_node, local_y_node;
@@ -93,10 +83,10 @@ int main(int argc, char **argv) {
     auto local_x = xmlGetProp(local_x_node, (const xmlChar *)"v");
     auto local_y = xmlGetProp(local_y_node, (const xmlChar *)"v");
 
-    LatLonAlt llh = to_llh.convert(
+    auto ll = in_map_projector->convertToLatLon(
         Coord{std::stod(std::string(reinterpret_cast<char *>(local_x))),
-              std::stod(std::string(reinterpret_cast<char *>(local_y))), 0});
-    auto coord = from_llh.convert(llh);
+              std::stod(std::string(reinterpret_cast<char *>(local_y)))});
+    auto coord = out_map_projector->convertToCoord(ll);
 
     xmlSetProp(local_x_node, (const xmlChar *)"v",
                (const xmlChar *)(std::to_string(coord.x).c_str()));
