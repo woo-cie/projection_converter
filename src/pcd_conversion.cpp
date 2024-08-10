@@ -70,8 +70,6 @@ int main(int argc, char **argv) {
 
 #pragma omp parallel for
   for (pcl::uindex_t i = 0; i < n_points; ++i) {
-    const auto point_index = i;
-    const pcl::uindex_t &field_offset = 1;
     auto prev_x = cloud->at<float>(i, x_idx->offset);
     auto prev_y = cloud->at<float>(i, y_idx->offset);
 

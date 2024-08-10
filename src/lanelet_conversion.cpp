@@ -74,9 +74,6 @@ int main(int argc, char **argv) {
   // Convert points
   for (auto i = 0; i < size; i++) {
     auto node = nodes->nodeTab[i];
-    auto lat = xmlGetProp(node, (const xmlChar *)"lat");
-    auto lon = xmlGetProp(node, (const xmlChar *)"lon");
-
     auto c = node->children;
     xmlNodePtr local_x_node, local_y_node;
     while (c != NULL) {
