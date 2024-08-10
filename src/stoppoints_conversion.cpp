@@ -1,17 +1,7 @@
-#include <GeographicLib/MGRS.hpp>
-#include <algorithm>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
+#include <csv.hpp>
 #include <projection_converter/converter_from_llh.hpp>
 #include <projection_converter/converter_to_llh.hpp>
 #include <projection_converter/lat_lon_alt.hpp>
-#include <sstream>
-#include <string>
-#include <vector>
 #include <yaml-cpp/yaml.h>
 
 // Function to draw a progress bar
@@ -40,38 +30,20 @@ int main(int argc, char **argv) {
   YAML::Node output_config = YAML::LoadFile(argv[2]);
 
   // Load Stoppoints file
-  std::ifstream ifs_stoppoints(argv[3]);
-  std::ofstream ofs_stoppoints(argv[4]);
+  auto stoppoints = Csv::load_file(argv[3]);
 
-  std::string str_buf;
-  std::vector<std::string> str_vec_buf;
-
-  std::getline(ifs_stoppoints, str_buf);
-  boost::algorithm::split(str_vec_buf, str_buf, boost::is_any_of(","));
-  const int x_idx =
-      std::distance(str_vec_buf.begin(),
-                    std::find(str_vec_buf.begin(), str_vec_buf.end(), "x"));
-  const int y_idx =
-      std::distance(str_vec_buf.begin(),
-                    std::find(str_vec_buf.begin(), str_vec_buf.end(), "y"));
-  std::string raw_header = str_buf;
-
-  std::vector<std::vector<std::string>> data;
-  while (std::getline(ifs_stoppoints, str_buf)) {
-    std::vector<std::string> vec_buf;
-    boost::algorithm::split(vec_buf, str_buf, boost::is_any_of(","));
-    data.push_back(vec_buf);
-  }
+  const int x_idx = stoppoints.cloumn_indices.at("x");
+  const int y_idx = stoppoints.cloumn_indices.at("y");
 
   // Define converters
   ConverterToLLH to_llh(input_config);
   ConverterFromLLH from_llh(output_config);
 
-  auto size = data.size();
+  auto size = stoppoints.data.size();
 
   // Convert points
   for (auto i = 0; i < size; i++) {
-    auto &vec = data.at(i);
+    auto &vec = stoppoints.data.at(i);
     auto x = std::stod(vec.at(x_idx));
     auto y = std::stod(vec.at(y_idx));
     LatLonAlt llh = to_llh.convert(Coord{x, y, 0});
@@ -84,10 +56,7 @@ int main(int argc, char **argv) {
 
   std::cout << std::endl;
   // Save converted stoppoints to file
-  ofs_stoppoints << raw_header << std::endl;
-  for (auto vec : data) {
-    ofs_stoppoints << boost::algorithm::join(vec, ",") << std::endl;
-  }
+  stoppoints.export_file(argv[4]);
 
   std::cout << "Stopponts projection conversion completed successfully.\n";
 
