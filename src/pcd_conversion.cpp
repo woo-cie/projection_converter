@@ -2,14 +2,13 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <map_projector/map_projector.hpp>
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/io/auto_io.h>
 #include <pcl/point_types.h>
+#include <projection_converter/progress_bar.hpp>
 #include <string>
 #include <yaml-cpp/yaml.h>
-
-#include <map_projector/map_projector.hpp>
-#include <projection_converter/progress_bar.hpp>
 
 // Function to draw a progress bar
 void drawProgressBar(int len, double percent) {
@@ -68,14 +67,10 @@ int main(int argc, char **argv) {
 
 #pragma omp parallel for
   for (pcl::uindex_t i = 0; i < n_points; ++i) {
-    const auto point_index = i;
-    const pcl::uindex_t &field_offset = 1;
     auto prev_x = cloud->at<float>(i, x_idx->offset);
     auto prev_y = cloud->at<float>(i, y_idx->offset);
-
     auto ll = in_map_projector->convertToLatLon(Coord{prev_x, prev_y});
     auto coord = out_map_projector->convertToCoord(ll);
-
     cloud->at<float>(i, x_idx->offset) = coord.x;
     cloud->at<float>(i, y_idx->offset) = coord.y;
     pg.update(1);
