@@ -12,7 +12,24 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
-int main(int argc, char **argv) {
+// Function to draw a progress bar
+void drawProgressBar(int len, double percent) {
+  std::cout << "Progress: ";
+  for (int i = 0; i < len; ++i) {
+    if (i < static_cast<int>(len * percent)) {
+      std::cout << '=';
+    } else {
+      std::cout << ' ';
+    }
+  }
+  std::cout << " [" << static_cast<int>(100 * percent) << "%]\r";
+  std::cout.flush();
+}
+
+struct
+
+    int
+    main(int argc, char **argv) {
   if (argc != 5) {
     std::cout << "Usage: ./ProjectionConverter input_yaml output_yaml "
                  "input_pcd output_pcd\n";
@@ -38,25 +55,40 @@ int main(int argc, char **argv) {
   const int y_idx =
       std::distance(str_vec_buf.begin(),
                     std::find(str_vec_buf.begin(), str_vec_buf.end(), "y"));
-  ofs_stoppoints << str_buf << std::endl;
+
+  std::string raw_header = str_buf;
+
+  std::vector<std::vector<std::string>> data;
+  while (std::getline(ifs_stoppoints, str_buf)) {
+    std::vector<std::string> vec_buf;
+    boost::algorithm::split(vec_buf, str_buf, boost::is_any_of(","));
+    data.push_back(vec_buf);
+  }
 
   // Define converters
   auto in_map_projector = MapProjector::getMapProjector(input_config);
   auto out_map_projector = MapProjector::getMapProjector(output_config);
 
+  auto size = data.size();
+
   // Convert points
-  while (std::getline(ifs_stoppoints, str_buf)) {
-    boost::algorithm::split(str_vec_buf, str_buf, boost::is_any_of(","));
-    auto ll = in_map_projector->convertToLatLon(Coord{
-        std::stod(str_vec_buf.at(x_idx)), std::stod(str_vec_buf.at(y_idx))});
+  for (auto i = 0; i < size; i++) {
+    auto &vec = data.at(i);
+    auto ll = in_map_projector->convertToLatLon(
+        Coord{std::stod(vec.at(x_idx)), std::stod(vec.at(y_idx))});
     auto coord = out_map_projector->convertToCoord(ll);
-    str_vec_buf.at(x_idx) = std::to_string(coord.x);
-    str_vec_buf.at(y_idx) = std::to_string(coord.y);
-    ofs_stoppoints << boost::algorithm::join(str_vec_buf, ",") << std::endl;
+    vec.at(x_idx) = std::to_string(coord.x);
+    vec.at(y_idx) = std::to_string(coord.y);
+    // Update and draw the progress bar
+    drawProgressBar(70, static_cast<double>(i + 1) / size);
   }
 
   std::cout << std::endl;
-  // Save converted point cloud to file
+  // Save converted stoppoints to file
+  ofs_stoppoints << raw_header << std::endl;
+  for (auto vec : data) {
+    ofs_stoppoints << boost::algorithm::join(vec, ",") << std::endl;
+  }
 
   std::cout << "Stopponts projection conversion completed successfully.\n";
 
