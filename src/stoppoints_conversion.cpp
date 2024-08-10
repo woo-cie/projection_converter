@@ -6,14 +6,13 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <projection_converter/converter_from_llh.hpp>
+#include <projection_converter/converter_to_llh.hpp>
 #include <projection_converter/lat_lon_alt.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
-
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
 
 int main(int argc, char **argv) {
   if (argc != 5) {

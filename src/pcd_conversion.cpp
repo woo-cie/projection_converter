@@ -5,13 +5,12 @@
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/io/auto_io.h>
 #include <pcl/point_types.h>
-#include <projection_converter/lat_lon_alt.hpp>
-#include <string>
-#include <yaml-cpp/yaml.h>
-
 #include <projection_converter/converter_from_llh.hpp>
 #include <projection_converter/converter_to_llh.hpp>
+#include <projection_converter/lat_lon_alt.hpp>
 #include <projection_converter/progress_bar.hpp>
+#include <string>
+#include <yaml-cpp/yaml.h>
 
 // Function to draw a progress bar
 void drawProgressBar(int len, double percent) {

@@ -5,12 +5,11 @@
 #include <libxml/tree.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/xpath.h>
+#include <projection_converter/converter_from_llh.hpp>
+#include <projection_converter/converter_to_llh.hpp>
 #include <projection_converter/lat_lon_alt.hpp>
 #include <string>
 #include <yaml-cpp/yaml.h>
-
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
 
 // Function to draw a progress bar
 void drawProgressBar(int len, double percent) {
