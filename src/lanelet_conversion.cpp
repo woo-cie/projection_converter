@@ -5,12 +5,11 @@
 #include <libxml/tree.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/xpath.h>
+#include <projection_converter/converter_from_llh.hpp>
+#include <projection_converter/converter_to_llh.hpp>
 #include <projection_converter/lat_lon_alt.hpp>
 #include <string>
 #include <yaml-cpp/yaml.h>
-
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
 
 // Function to draw a progress bar
 void drawProgressBar(int len, double percent) {
@@ -74,9 +73,6 @@ int main(int argc, char **argv) {
   // Convert points
   for (auto i = 0; i < size; i++) {
     auto node = nodes->nodeTab[i];
-    auto lat = xmlGetProp(node, (const xmlChar *)"lat");
-    auto lon = xmlGetProp(node, (const xmlChar *)"lon");
-
     auto c = node->children;
     xmlNodePtr local_x_node, local_y_node;
     while (c != NULL) {

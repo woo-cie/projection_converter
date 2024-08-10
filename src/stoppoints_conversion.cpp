@@ -6,14 +6,13 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <projection_converter/converter_from_llh.hpp>
+#include <projection_converter/converter_to_llh.hpp>
 #include <projection_converter/lat_lon_alt.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
-
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
 
 int main(int argc, char **argv) {
   if (argc != 5) {
@@ -52,8 +51,7 @@ int main(int argc, char **argv) {
     boost::algorithm::split(str_vec_buf, str_buf, boost::is_any_of(","));
     auto x = std::stod(str_vec_buf.at(x_idx));
     auto y = std::stod(str_vec_buf.at(x_idx));
-    LatLonAlt llh = to_llh.convert(Coord{std::stod(str_vec_buf.at(x_idx)),
-                                         std::stod(str_vec_buf.at(y_idx)), 0});
+    LatLonAlt llh = to_llh.convert(Coord{x, y, 0});
     auto coord = from_llh.convert(llh);
     str_vec_buf.at(x_idx) = std::to_string(coord.x);
     str_vec_buf.at(y_idx) = std::to_string(coord.y);

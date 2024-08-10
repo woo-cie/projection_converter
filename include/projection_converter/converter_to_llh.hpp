@@ -14,7 +14,6 @@ public:
 private:
   std::string projector_type_;
   std::string mgrs_grid_;
-  double lat_, lon_;
 };
 
 #endif // PROJECTION_CONVERTER__CONVERTER_TO_LLH_HPP

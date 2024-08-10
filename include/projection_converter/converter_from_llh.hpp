@@ -5,9 +5,8 @@
 #include <GeographicLib/TransverseMercatorExact.hpp>
 #include <iostream>
 #include <projection_converter/lat_lon_alt.hpp>
-#include <yaml-cpp/yaml.h>
-
 #include <utility>
+#include <yaml-cpp/yaml.h>
 
 class ConverterFromLLH {
 public:
