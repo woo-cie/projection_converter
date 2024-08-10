@@ -26,6 +26,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 # Add the sub.cpp file as a library
 add_library(ConverterLib "src/converter_from_llh.cpp" "src/converter_to_llh.cpp")
+add_library(CsvLib "src/csv.cpp")
 
 # Create two executables
 add_executable(PCDConverter "src/pcd_conversion.cpp")
