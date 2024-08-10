@@ -6,23 +6,9 @@
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/io/auto_io.h>
 #include <pcl/point_types.h>
-#include <projection_converter/progress_bar.hpp>
+#include <progress_bar.hpp>
 #include <string>
 #include <yaml-cpp/yaml.h>
-
-// Function to draw a progress bar
-void drawProgressBar(int len, double percent) {
-  std::cout << "Progress: ";
-  for (int i = 0; i < len; ++i) {
-    if (i < static_cast<int>(len * percent)) {
-      std::cout << '=';
-    } else {
-      std::cout << ' ';
-    }
-  }
-  std::cout << " [" << static_cast<int>(100 * percent) << "%]\r";
-  std::cout.flush();
-}
 
 int main(int argc, char **argv) {
   if (argc != 5) {

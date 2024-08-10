@@ -6,9 +6,7 @@
 #include <stdexcept>
 #include <thread>
 
-#ifdef _OPENMP
-/// Multi-threading - yay!
-#else
+#ifndef _OPENMP
 /// Macros used to disguise the fact that we do not have multithreading enabled.
 #define omp_get_thread_num() 0
 #define omp_get_num_threads() 1
