@@ -32,7 +32,7 @@ add_executable(PCDConverter "src/pcd_conversion.cpp")
 add_executable(Lanelet2Converter "src/lanelet_conversion.cpp")
 add_executable(StoppointsConverter "src/stoppoints_conversion.cpp")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Wall")
 
 # Link the libraries
 target_link_libraries(PCDConverter ConverterLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
