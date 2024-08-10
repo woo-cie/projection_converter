@@ -6,14 +6,11 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <projection_converter/lat_lon_alt.hpp>
+#include <map_projector/map_projector.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
-
-#include <projection_converter/converter_from_llh.hpp>
-#include <projection_converter/converter_to_llh.hpp>
 
 int main(int argc, char **argv) {
   if (argc != 5) {
@@ -44,17 +41,15 @@ int main(int argc, char **argv) {
   ofs_stoppoints << str_buf << std::endl;
 
   // Define converters
-  ConverterToLLH to_llh(input_config);
-  ConverterFromLLH from_llh(output_config);
+  auto in_map_projector = MapProjector::getMapProjector(input_config);
+  auto out_map_projector = MapProjector::getMapProjector(output_config);
 
   // Convert points
   while (std::getline(ifs_stoppoints, str_buf)) {
     boost::algorithm::split(str_vec_buf, str_buf, boost::is_any_of(","));
-    auto x = std::stod(str_vec_buf.at(x_idx));
-    auto y = std::stod(str_vec_buf.at(x_idx));
-    LatLonAlt llh = to_llh.convert(Coord{std::stod(str_vec_buf.at(x_idx)),
-                                         std::stod(str_vec_buf.at(y_idx)), 0});
-    auto coord = from_llh.convert(llh);
+    auto ll = in_map_projector->convertToLatLon(Coord{
+        std::stod(str_vec_buf.at(x_idx)), std::stod(str_vec_buf.at(y_idx))});
+    auto coord = out_map_projector->convertToCoord(ll);
     str_vec_buf.at(x_idx) = std::to_string(coord.x);
     str_vec_buf.at(y_idx) = std::to_string(coord.y);
     ofs_stoppoints << boost::algorithm::join(str_vec_buf, ",") << std::endl;

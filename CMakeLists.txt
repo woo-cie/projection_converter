@@ -39,7 +39,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Wall")
 # Link the libraries
 target_link_libraries(PCDConverter MapProjectorLib ${PCL_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
 target_link_libraries(Lanelet2Converter MapProjectorLib ${LIBXML2_LIBRARIES} yaml-cpp ${GeographicLib_LIBRARIES})
-target_link_libraries(StoppointsConverter ConverterLib yaml-cpp ${GeographicLib_LIBRARIES})
+target_link_libraries(StoppointsConverter MapProjectorLib yaml-cpp ${GeographicLib_LIBRARIES})
 
 # For test
 include(FetchContent)
