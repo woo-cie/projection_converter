@@ -10,9 +10,9 @@ find_package(PCL 1.3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(OpenMP REQUIRED)
 
-# find_package(GeographicLib REQUIRED)
+find_package(GeographicLib REQUIRED)
 find_path(GeographicLib_INCLUDE_DIRS NAMES GeographicLib/Config.h)
-find_library(GeographicLib_LIBRARIES NAMES GeographicLib)
+find_library(GeographicLib_LIBRARIES NAMES Geographic GeographicLib)
 
 include_directories(${PCL_INCLUDE_DIRS})
 include_directories(${LANELET2_INCLUDE_DIRS})
